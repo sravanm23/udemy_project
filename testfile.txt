@@ -1,1 +1,55 @@
 git clone test file
+
+/etc/rc.d/init.d
+
+#!/bin/bash
+#
+# /etc/rc.d/init.d/aem
+#
+#
+#
+#
+# # of the file to the end of the tags section must begin with a #
+# character. After the tags section, there should be a blank line.
+# This keeps normal comments in the rest of the file from being
+# mistaken for tags, should they happen to fit the pattern.>
+#
+# chkconfig: 35 85 15
+# description: This service manages the Adobe Experience Manager java process.
+# processname: aem
+# pidfile: /crx-quickstart/server/logs/cq.pid
+
+CQ5_ROOT=/application/aem
+CQ5_USER=aem
+
+########
+SERVER=${CQ5_ROOT}/crx-quickstart/bin
+START=${SERVER}/start
+STOP=${SERVER}/stop
+STATUS="${SERVER}/serverctl status"
+
+case "$1" in
+start)
+echo -n "Starting AEM services: "
+su - ${CQ5_USER} ${START}
+touch /var/lock/subsys/aem
+;;
+stop)
+echo -n "Shutting down AEM services: "
+su - ${CQ5_USER} ${STOP}
+rm -f /var/lock/subsys/aem
+;;
+status)
+su - ${CQ5_USER} ${STATUS}
+;;
+restart)
+su - ${CQ5_USER} ${STOP}
+su - ${CQ5_USER} ${START}
+;;
+reload)
+;;
+*)
+echo "Usage: aem {start|stop|status|reload}"
+exit 1
+;;
+esac
